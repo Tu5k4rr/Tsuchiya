@@ -2,18 +2,22 @@
 from datetime import datetime
 from discord.ext import commands
 from currency_converter import CurrencyConverter
-import pytz, discord, requests, random
+from bs4 import BeautifulSoup
+import pytz, discord, requests, random, json
 
 #declaring client
 client = discord.Client()
 c = CurrencyConverter()
 
-#Read auth Token file
+#Read auth Token files
 with open('token.txt', 'r') as file:
     token = file.read()
 
+with open('gifkey.txt') as gk:
+    gk1 = gk.read()
+
 #set up commend prefix
-client = commands.Bot(command_prefix = '!')
+client = commands.Bot(command_prefix = '!', case_insensitive=True)
 
 
 @client.command()
@@ -52,7 +56,8 @@ async def help(ctx):
     embed.add_field(name='!randomwiki', value='Random Wikipedia Article', inline=False)
     embed.add_field(name='!wikitoday', value='Wikipedia Today Events', inline=False)
     embed.add_field(name='!roll', value='ROLL FOR DA NAT 20 SON!!', inline=False)
-
+    embed.add_field(name='!ud', value='Random Urban Dictonary Page', inline=False)
+    embed.add_field(name='!ball', value='Magic Ball Will Give You All The Answers To your Questions', inline=False)
     await ctx.send(embed=embed)
 
 @client.command()
@@ -114,11 +119,19 @@ async def roll (ctx):
 async def ud (ctx):
     min = 1
     max = 1000
-    resid = random.randint(min, max)
+    resid = str(random.randint(min, max))
     udurl = 'https://www.urbandictionary.com/random.php?page='
-    await ctx.send(f'{udurl}{resid}')
-    
-
+    newurl = udurl + resid
+    requd = requests.get(newurl)
+    html1 = requd.content
+    soup = BeautifulSoup(html1, "html.parser")
+    udtitle = soup.find("div",attrs={"class":"def-header"}).text
+    udmean = soup.find("div",attrs={"class":"meaning"}).text[:80]
+    embedud = discord.Embed(
+              title = f'{udtitle}', description = f'{udmean}...', url = f'{newurl}', colour = discord.Colour.purple())
+    await ctx.send(embed=embedud)
+        
+   
 @client.command()
 async def ball (ctx):
     a= ["As I see it, yes.",
@@ -127,7 +140,7 @@ async def ball (ctx):
     "Cannot predict now.",
     "Concentrate and ask again.",
     "Don’t count on it.",
-    "It is certain."
+    "It is certain.",
     "It is decidedly so.",
     "Most likely",
     "My reply is no.",
@@ -143,6 +156,24 @@ async def ball (ctx):
     "You may rely on it."]
     b = random.choice(a)
     await ctx.send(f'{b}')
+
+@client.command()
+async def happybirthday (ctx):
+    bgurl = (f'https://api.giphy.com/v1/gifs/random?api_key={gk1}&tag=happybirthday&rating=R')
+    reqbgif = requests.get(bgurl)
+    bgjson = json.loads(reqbgif.content)
+    ffb = (bgjson['data']['embed_url'])
+    await ctx.send(f'{ffb}')
+
+@client.command()
+async def rgif (ctx):
+    gurl = (f'https://api.giphy.com/v1/gifs/random?api_key={gk1}&rating=R')
+    reqgif = requests.get(gurl)
+    gjson = json.loads(reqgif.content)
+    ff = (gjson['data']['embed_url'])
+    await ctx.send(f'{ff}')
+
+
 
 
 client.run(token)

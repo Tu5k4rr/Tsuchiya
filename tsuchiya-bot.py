@@ -15,6 +15,9 @@ with open('token.txt', 'r') as file:
 
 #set up commend prefix
 client = commands.Bot(command_prefix = '!', case_insensitive=True)
+@client.event
+async def on_ready():
+    await client.change_presence(activity=discord.Game('Python3'))
 
 
 @client.command()

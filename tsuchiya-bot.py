@@ -214,6 +214,13 @@ async def goodmorning (ctx):
     gmjson = json.loads(reqgmif.content)
     gffb = (gmjson['data']['embed_url'])
     await ctx.send(f'{gffb}')
+    
+@client.command()
+async def eurobeat (ctx):
+    with open('eurobeat.json', 'r') as jeuro:
+        eudata = json.load(jeuro)
+        gas = random.choice(eudata)
+        await ctx.send(f'{gas}')
 
    
 client.run(token)

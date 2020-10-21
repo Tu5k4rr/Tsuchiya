@@ -13,9 +13,6 @@ c = CurrencyConverter()
 with open('token.txt', 'r') as file:
     token = file.read()
 
-with open('gifkey.txt') as gk:
-    gk1 = gk.read()
-
 #set up commend prefix
 client = commands.Bot(command_prefix = '!', case_insensitive=True)
 
@@ -53,11 +50,15 @@ async def help(ctx):
     embed.set_author(name='Help : list of commands available')
     embed.add_field(name='!time', value='Returns time zones :flag_us: :flag_gb: :flag_jp:', inline=False)
     embed.add_field(name='!money', value='Returns rate of 1GBP in YEN', inline=False)
-    embed.add_field(name='!randomwiki', value='Random Wikipedia Article', inline=False)
+    embed.add_field(name='!rwiki', value='Random Wikipedia Article', inline=False)
     embed.add_field(name='!wikitoday', value='Wikipedia Today Events', inline=False)
     embed.add_field(name='!roll', value='ROLL FOR DA NAT 20 SON!!', inline=False)
     embed.add_field(name='!ud', value='Random Urban Dictonary Page', inline=False)
     embed.add_field(name='!ball', value='Magic Ball Will Give You All The Answers To your Questions', inline=False)
+    embed.add_field(name='!rate', value='Rate Stuff', inline=False)
+    embed.add_field(name='!rgif', value='Random GIF', inline=False)
+    embed.add_field(name='!happybirthday', value='Wish HappyBirthday With a GIF', inline=False)
+    embed.add_field(name='!bible', value='Random Bible Verse', inline=False)
     await ctx.send(embed=embed)
 
 @client.command()
@@ -95,7 +96,7 @@ async def money(ctx):
     await ctx.send(embed=embed2)
 
 @client.command()
-async def randomwiki(ctx):
+async def rwiki(ctx):
     wikiResp = requests.get("https://en.wikipedia.org/wiki/Special:Random")
     await ctx.send(f'{wikiResp.url}')
 
@@ -159,7 +160,9 @@ async def ball (ctx):
 
 @client.command()
 async def happybirthday (ctx):
-    bgurl = (f'https://api.giphy.com/v1/gifs/random?api_key={gk1}&tag=happybirthday&rating=R')
+    with open('gifkey.txt') as gk:
+        gk1 = gk.read()
+    bgurl = (f'https://api.giphy.com/v1/gifs/random?api_key={gk1}&tag=happybirthday')
     reqbgif = requests.get(bgurl)
     bgjson = json.loads(reqbgif.content)
     ffb = (bgjson['data']['embed_url'])
@@ -167,15 +170,52 @@ async def happybirthday (ctx):
 
 @client.command()
 async def rgif (ctx):
-    gurl = (f'https://api.giphy.com/v1/gifs/random?api_key={gk1}&rating=R')
-    reqgif = requests.get(gurl)
-    gjson = json.loads(reqgif.content)
-    ff = (gjson['data']['embed_url'])
-    await ctx.send(f'{ff}')
+    turl = 'https://api.tenor.com/v1/random?q=%s&key='
+    with open("tenor.txt", "r") as tg:
+        tkey = tg.read()
+    treq = requests.get(f'{turl}{tkey}')
+    tjson = json.loads(treq.content)
+    tfinal = (tjson['results'][0]['url'])
+
+    gurl = 'https://api.giphy.com/v1/gifs/random?api_key='
+    with open('gifkey.txt') as gk:
+        gk1 = gk.read()
+    bgurl = (f'{gurl}{gk1}')
+    reqbgif = requests.get(bgurl)
+    bgjson = json.loads(reqbgif.content)
+    ffb = (bgjson['data']['embed_url'])
+    rr = random.choice([ffb, tfinal])
+    await ctx.send(f'{rr}')
 
 
+@client.command()
+async def rate (ctx):
+    min = 1
+    max = 10
+    rating = random.randint(min, max)
+    await ctx.send(f'{rating}/10')
 
+@client.command()
+async def bible (ctx):
+    bvurl = 'https://dailyverses.net/random-bible-verse'
+    reqbib = requests.get(bvurl)
+    html2 = reqbib.content
+    soup = BeautifulSoup(html2, "html.parser")
+    bv = soup.find("div",attrs={"class":"bibleVerse"}).text
+    bvref = soup.find("div",attrs={"class":"reference"}).text
+    embedbv = discord.Embed(
+              title = f'{bvref}', description = f'{bv}', colour = discord.Colour.purple())
+    await ctx.send(embed=embedbv)
 
+@client.command()
+async def goodmorning (ctx):
+    gmgurl = (f'https://api.giphy.com/v1/gifs/random?api_key={gk1}&tag=goodmorning')
+    reqgmif = requests.get(gmgurl)
+    gmjson = json.loads(reqgmif.content)
+    gffb = (gmjson['data']['embed_url'])
+    await ctx.send(f'{gffb}')
+
+   
 client.run(token)
 
 

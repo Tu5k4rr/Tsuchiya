@@ -16,7 +16,7 @@ with open(f'{cwd}/keys/token.txt', 'r') as botkey:
 
 #Decalring discord bot varibles.
 client = discord.Client()
-client = commands.Bot(command_prefix = '$', case_insensitive=True)
+client = commands.Bot(command_prefix = '!', case_insensitive=True)
 
 #Utils functions
 @client.command()

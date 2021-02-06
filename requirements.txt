@@ -1,4 +1,6 @@
-currency_converter
-discord
-requests
-pytz
+requests==2.24.0
+bs4==0.0.1
+CurrencyConverter==0.14.3
+discord==1.0.1
+discord.py==1.5.0
+pytz==2020.1

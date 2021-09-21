@@ -1,37 +1,31 @@
 #Importing scripts and functions along with required libraries.
-from commands import fun, gifs, greetings, media, utils, webstuff
+from commands import fun, gifs, media, webstuff, subred
 from discord.ext import commands
 import discord
 import os
 
-#test
-script_dir = os.path.dirname(__file__)
-
+#Setup loading vars and data
 #cwd
 cwd = os.getcwd()
 
-#Reading in apikey
+#Reading in Discord API Key
 with open(f'{cwd}/keys/token.txt', 'r') as botkey:
-    token = botkey.read()
+   token = botkey.read()
 
+#Reading in Data
 #Decalring discord bot varibles.
 client = discord.Client()
 client = commands.Bot(command_prefix = '!', case_insensitive=True)
 
-#Utils functions
+#Decalring functions
+#Fun functions
 @client.command()
-async def time(ctx):
-    await ctx.send(embed=utils.timecmd())
+async def coin (ctx):
+    await ctx.send(fun.coin())
 
 @client.command()
-async def commands(ctx):
-    await ctx.send(embed=utils.helpcmd())
-
-@client.command()
-async def money(ctx):
-    await ctx.send(embed=utils.moneycmd())
-
-#Fun functions 
+async def red (ctx):
+    await ctx.send(subred.reddit())
 
 @client.command()
 async def roll (ctx):
@@ -50,39 +44,21 @@ async def ud (ctx):
     await ctx.send(embed=fun.udcmd())
 
 
+@client.command()
+async def twitch (ctx):
+    await ctx.send(subred.twit())
+
+
+
 #gif functions
 @client.command()
-async def happybirthday (ctx):
-    await ctx.send(gifs.happycmd())
-
-@client.command()
 async def rgif (ctx):
-    await ctx.send(gifs.rgifcmd())
+    await ctx.send(gifs.r_choice())
 
-@client.command()
-async def weeb (ctx):
-    await ctx.send(gifs.weebcmd())
-#Media functions
 @client.command()
 async def eurobeat (ctx):
     await ctx.send(media.eurobeatcmd())
 
-#greeting functions
-@client.command()
-async def goodmorning (ctx):
-    await ctx.send(greetings.goodmorningcmd())
-
-@client.command()
-async def goodafternoon (ctx):
-    await ctx.send(greetings.goodafternooncmd())
-
-@client.command()
-async def goodevening (ctx):
-    await ctx.send(greetings.goodeveningcmd())
-
-@client.command()
-async def goodnight (ctx):
-    await ctx.send(greetings.goodnightcmd())
 
 #web functions
 @client.command()
@@ -95,4 +71,3 @@ async def wikitoday (ctx):
 
 #start bot
 client.run(token)
-

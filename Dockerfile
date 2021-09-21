@@ -1,7 +1,7 @@
 FROM python:3.8.7-buster
 
 #creating directory for app
-WORKDIR /root/testing
+WORKDIR /root/bot
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt

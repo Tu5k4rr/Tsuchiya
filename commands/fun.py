@@ -32,7 +32,7 @@ def ratecmd():
 #Pulls Random Urban Dict Word and meaning.
 def udcmd():
     min = 1
-    max = 100
+    max = 1000
     resid = str(random.randint(min, max))
     udurl = 'https://www.urbandictionary.com/random.php?page='
     newurl = udurl + resid

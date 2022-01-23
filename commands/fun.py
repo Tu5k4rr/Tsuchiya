@@ -32,17 +32,21 @@ def ratecmd():
 #Pulls Random Urban Dict Word and meaning.
 def udcmd():
     min = 1
-    max = 1000
+    max = 100
     resid = str(random.randint(min, max))
     udurl = 'https://www.urbandictionary.com/random.php?page='
     newurl = udurl + resid
     requd = requests.get(newurl)
     html1 = requd.content
     soup = BeautifulSoup(html1, "html.parser")
-    udtitle = soup.find("div",attrs={"class":"def-header"}).text
-    udmean = soup.find("div",attrs={"class":"meaning"}).text
+    udtitle = soup.select('h1')[0].text
+    ad = []
+    for i in soup.find("div", {"class":"meaning my-4"}).stripped_strings:
+        ad.append(i)
+
+    udmean = (' '.join(ad))
     embedud = discord.Embed(
-              title = f'{udtitle}', description = f'{udmean}', url = f'{newurl}', colour = discord.Colour.purple())
+                title = f'{udtitle}', description = f'{udmean}', url = f'{newurl}', colour = discord.Colour.purple())
     return embedud
 
 def coin():
